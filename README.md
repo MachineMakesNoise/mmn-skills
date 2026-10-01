@@ -8,7 +8,7 @@ These skills work great alongside [Matt Pocock's skills](https://github.com/matt
 
 - **mmn-context** — build or refresh evidence-backed Markdown context for a repository.
 - **mmn-find-work** — discover and group actionable TODO-style and research markers, with optional issue-platform creation and source cleanup.
-- **mmn-git-workflow** — manage an anchor branch and stacked GitHub task PRs using GitHub CLI and `gh-stack`.
+- **mmn-github-workflow** — manage GitHub anchor branches, stacked task PRs, authorized merges, and related issue updates and closure using GitHub CLI and `gh-stack`.
 
 ## Install with the Vercel skills CLI
 
@@ -36,7 +36,7 @@ List what the CLI discovers before installing:
 npx skills add /path/to/mmn-skills --list
 ```
 
-Each skill folder includes the references it needs and does not depend on repository-local agent configuration or companion skills. The Git workflow skill requires GitHub CLI authentication and the `github/gh-stack` extension for stacked-PR operations.
+Each skill folder includes the references it needs and does not depend on repository-local agent configuration or companion skills. The GitHub workflow skill requires GitHub CLI authentication and the `github/gh-stack` extension for stacked-PR operations.
 
 ## License
 

@@ -1,9 +1,9 @@
 ---
-name: mmn-git-workflow
-description: Manage an anchor branch and stacked GitHub task pull requests, from anchor setup through task submission and authorized merging. Use when the user requests this branch and PR workflow.
+name: mmn-github-workflow
+description: Manage GitHub anchor branches, stacked task PRs, and related issues. Use when setting up an anchor PR, implementing or submitting task branches in an anchor-based stack, merging authorized PRs, or updating and closing issues after a PR merges.
 ---
 
-# Anchor and task PR workflow
+# GitHub anchor, task PR, and issue workflow
 
 Use this workflow for a GitHub repository organized around an anchor branch and stacked task branches. It assumes Git, an authenticated GitHub CLI (`gh`), and the `github/gh-stack` CLI extension. Check that each prerequisite is available before using it; if a required command or repository feature is unavailable, report the blocker instead of silently switching workflows. Before any push, submit, or sync, confirm the intended remote. If multiple remotes exist, name the remote explicitly in Git commands (for example, `git push <remote> <branch>`) and pass `--remote <name>` to `gh stack` commands that support it. Ask the user when the destination is ambiguous.
 
@@ -65,8 +65,14 @@ Merge only after GitHub user approval or an explicit user request to merge. Inte
 
 For a single task PR, use `gh pr merge`. For a stack containing multiple task PRs, merge the lowest task PR with `gh stack merge <lowest-task-PR-number> --yes`, then run `gh stack sync` and inspect the remaining layers before continuing. Do not use `gh pr merge` to merge a multi-PR stack.
 
-After each merge, confirm which PRs actually merged before updating issues. For each merged task PR, comment on its task issue with the merge and previously established acceptance not already recorded, then close the issue. After the anchor PR merges, do the same for its parent issue. Treat acceptance as previously established; do not invent new acceptance criteria at merge time.
+After each merge, confirm which PRs actually merged before updating issues. For each confirmed merged PR:
+
+- Inspect its task, parent, sibling, and other related issues. Update every affected issue with a comment linking the merged PR, naming the destination branch, and recording the resulting status or remaining work. Include previously established acceptance not already recorded; do not invent new acceptance criteria at merge time.
+- Close an issue only when its full scope and established acceptance are satisfied. A completed task issue can close when its task PR merges into the anchor. Keep partially completed and tracking issues open, with their progress and remaining work updated; a related-issue link alone does not justify closure.
+- After the anchor PR merges into the target, update its parent issue and close it if its full scope is complete. Keep a parent tracking the broader delivery open until that merge, even when all task issues have closed.
+
+Verify the resulting issue states, including any automatic GitHub closures, and correct premature closures. If a required update or closure is blocked, report the affected issue and remaining action.
 
 Delete a merged source branch locally or remotely only when no open PR or remaining stack layer depends on it. Retain the anchor branch until its PR merges and the stack is finished.
 
-**Done:** only authorized PRs have merged, issue updates reflect confirmed merges, and branches with remaining dependencies are preserved.
+**Done:** only authorized PRs have merged, every affected issue reflects the confirmed merges, completed issues are closed and unfinished issues remain open, and branches with remaining dependencies are preserved.
