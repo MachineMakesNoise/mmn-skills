@@ -15,7 +15,12 @@ Apply any explicit repository policy that governs the work. This skill does not 
 - The **anchor branch** has an anchor PR into the target and is the trunk for task stacks. It is not itself a task layer and stays open while its task PRs merge into it.
 - Each **task branch** contains one reviewable task. Its PR targets the branch directly below it: the anchor for the bottom task, or the preceding task branch for higher layers.
 
-Keep implementation changes on task branches. Preserve unrelated working-tree changes, and do not merge a PR without GitHub user approval or an explicit request to merge.
+## Git safeguards
+
+- Stay on the current branch unless the user authorizes a switch or the transition is explicitly covered by the requested workflow. Ask when the destination or authorization is unclear.
+- Working on the repository's default branch requires explicit user permission; selecting it as the target does not authorize implementation changes there. Keep implementation changes on task branches unless the user explicitly waives that constraint for the identified scope.
+- Preserve unrelated working-tree changes. Keep each task branch focused on its reviewable task; include adjacent changes only for correctness, safety, consistency, or maintainability.
+- When delegating work, pass the branch roles, authorized transitions, task scope, and applicable Git and merge constraints to every delegated agent. Delegation does not expand the authorization.
 
 ## 1. Initialize an anchor
 
@@ -56,7 +61,9 @@ This pushes the stack and opens ready-for-review PRs. After submission, run `gh 
 
 ## 3. Merge and close
 
-Merge only after GitHub user approval or an explicit user request. For a single task PR, use `gh pr merge`. For a stack containing multiple task PRs, merge the lowest task PR with `gh stack merge <lowest-task-PR-number> --yes`, then run `gh stack sync` and inspect the remaining layers before continuing. Do not use `gh pr merge` to merge a multi-PR stack.
+Merge only after GitHub user approval or an explicit user request to merge. Internal agent review does not authorize merging. Confirm that all applicable repository merge prerequisites are satisfied, including required checks, reviews, and branch protections; user authorization does not bypass them. Once all task PRs have merged into the anchor, merge the anchor PR into the target only when that PR is separately authorized and its prerequisites are satisfied.
+
+For a single task PR, use `gh pr merge`. For a stack containing multiple task PRs, merge the lowest task PR with `gh stack merge <lowest-task-PR-number> --yes`, then run `gh stack sync` and inspect the remaining layers before continuing. Do not use `gh pr merge` to merge a multi-PR stack.
 
 After each merge, confirm which PRs actually merged before updating issues. For each merged task PR, comment on its task issue with the merge and previously established acceptance not already recorded, then close the issue. After the anchor PR merges, do the same for its parent issue. Treat acceptance as previously established; do not invent new acceptance criteria at merge time.
 
