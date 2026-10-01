@@ -1,6 +1,6 @@
 ---
 name: mmn-github-workflow
-description: Manage GitHub anchor branches, stacked task PRs, and related issues. Use when setting up an anchor PR, implementing or submitting task branches in an anchor-based stack, merging authorized PRs, or updating and closing issues after a PR merges.
+description: Manage GitHub anchor branches, issue-based task branches and their PRs, merges, and issue follow-up. Use when implementing a task from an issue, setting up an anchor, creating or submitting task PRs, merging PRs, or updating related issues.
 ---
 
 # GitHub anchor, task PR, and issue workflow
@@ -26,16 +26,22 @@ Apply any explicit repository policy that governs the work. This skill does not 
 
 Run this only after the user designates the current branch as the anchor and names its target. Confirm the current branch, target, Git status, and any parent issue before changing history or publishing a PR.
 
-- Reuse a matching anchor PR or create a draft PR from the anchor into the target. Include the parent issue link when one exists, and keep it current if that issue changes.
+- Inspect for an existing anchor PR whose base is the target and head is the anchor. Reuse a match and update its title or body if needed to reflect the scope and link the parent issue when one exists; if no match exists, create a draft PR after pushing the anchor below.
 - If the anchor has no commits ahead of the target and the index is clean, initialize the anchor PR with an empty commit:
 
   ```bash
   git commit --allow-empty -m "chore: initialize anchor PR"
   ```
 
-- Push the anchor before creating the draft PR. Do not initialize the task stack as part of anchor creation.
+- Push the anchor. If no matching PR exists, create a draft PR in this workflow run with:
 
-**Done:** the correct anchor PR targets the named branch, any existing parent issue is linked, and no task changes have been made on the anchor.
+  ```bash
+  gh pr create --draft --base <target> --head <anchor> --title "<anchor summary>" --body "<summary and parent issue link, if any>"
+  ```
+
+  Do not stop after presenting the command. After creating or reusing the PR, inspect it and confirm the base, head, title, body, and parent issue link; confirm it is a draft when newly created. Do not initialize the task stack as part of anchor creation.
+
+**Done:** the anchor is pushed, the correct PR targets the named branch and has an accurate summary and parent issue link when applicable, and no task changes have been made on the anchor.
 
 ## 2. Implement on task branches
 
@@ -47,15 +53,15 @@ gh stack init --base <anchor> <task-branch>
 
 For a user-designated separate task that belongs above the current stack, add a layer with `gh stack add <task-branch>`. Use the existing task branch and PR when continuing work on a task already in the stack. A task PR targets its immediate parent branch. When the whole stack has merged into the anchor, start the next task stack from the anchor.
 
-Before committing, inspect the relevant task, parent, sibling, and related issues and repository artifacts. Include affected repository updates in the task commit, update related external issues before pushing or making another commit, and state what changed and why in the commit message. Keep task and anchor PR summaries accurate.
+Before committing, inspect the relevant task, parent, sibling, and related issues and repository artifacts. Include affected repository updates in the task commit, update related external issues before pushing or making another commit, and state what changed and why in the commit message. Keep each task and anchor PR title and body accurate, including relevant issue links when applicable. Update existing PRs with `gh pr edit <PR> --title "<title>" --body "<summary and issue link>"`; after submission, inspect every PR and execute `gh pr edit` for any stale title or body. Treat accurate PR summaries and issue links as required completion checks.
 
-After task changes are validated, commit them and submit the stack with:
+After validating task changes, commit them and execute this submission command in the same workflow run:
 
 ```bash
 gh stack submit --auto --open
 ```
 
-This pushes the stack and opens ready-for-review PRs. After submission, run `gh stack view --json` and inspect each PR's base branch and diff to confirm that it contains only its task. When a lower layer changes, rebase and reconcile affected higher layers before pushing, then verify their PR diffs again. If stacked PRs are unavailable in the repository, stop and report that blocker rather than submitting ordinary independent PRs.
+Running this command is part of implementing the task, not a suggested follow-up for the user. It pushes the stack and opens ready-for-review PRs. Treat implementation as complete only after submission succeeds and you verify each PR with `gh stack view --json`, inspecting its base branch and diff to confirm that it contains only its task. When a lower layer changes, rebase and reconcile affected higher layers before pushing, then verify their PR diffs again. If submission fails or stacked PRs are unavailable, report the concrete blocker and leave the task incomplete rather than presenting the command as a next step for the user.
 
 **Done:** each task has its own committed branch and PR targeting its immediate parent; the pushed stack is reconciled and its PR diffs are verified.
 
