@@ -79,6 +79,6 @@ After each merge, confirm which PRs actually merged before updating issues. For 
 
 Verify the resulting issue states, including any automatic GitHub closures, and correct premature closures. If a required update or closure is blocked, report the affected issue and remaining action.
 
-Delete a merged source branch locally or remotely only when no open PR or remaining stack layer depends on it. Retain the anchor branch until its PR merges and the stack is finished.
+After a confirmed successful merge into the anchor or target, delete the merged source branch both locally and on the intended remote once no open PR or remaining stack layer depends on it. If dependencies remain, defer deletion until they are resolved. Retain the anchor branch until its PR merges into the target and the stack is finished. Verify both deletions; report any blocked cleanup.
 
-**Done:** only authorized PRs have merged, every affected issue reflects the confirmed merges, completed issues are closed and unfinished issues remain open, and branches with remaining dependencies are preserved.
+**Done:** only authorized PRs have merged, every affected issue reflects the confirmed merges, completed issues are closed and unfinished issues remain open, merged source branches without remaining dependencies are deleted locally and remotely, and branches with remaining dependencies are preserved.
