@@ -17,6 +17,7 @@ Apply any explicit repository policy that governs the work. This skill does not 
 
 ## Git safeguards
 
+- Use the current worktree unless the user explicitly instructs you to create or use a different isolated worktree.
 - Stay on the current branch unless the user authorizes a switch or the transition is explicitly covered by the requested workflow. Ask when the destination or authorization is unclear.
 - Working on the repository's default branch requires explicit user permission; selecting it as the target does not authorize implementation changes there. Keep implementation changes on task branches unless the user explicitly waives that constraint for the identified scope.
 - Preserve unrelated working-tree changes. Keep each task branch focused on its reviewable task; include adjacent changes only for correctness, safety, consistency, or maintainability.
