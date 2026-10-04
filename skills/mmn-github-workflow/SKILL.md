@@ -64,6 +64,8 @@ gh stack submit --auto --open
 
 Running this command is part of implementing the task, not a suggested follow-up for the user. It pushes the stack and opens ready-for-review PRs. Treat implementation as complete only after submission succeeds and you verify each PR with `gh stack view --json`, inspecting its base branch and diff to confirm that it contains only its task. When a lower layer changes, rebase and reconcile affected higher layers before pushing, then verify their PR diffs again. If submission fails or stacked PRs are unavailable, report the concrete blocker and leave the task incomplete rather than presenting the command as a next step for the user.
 
+When addressing PR review comments, reply in each thread with the implemented fix and relevant commit, or explain why no change was made. Resolve the thread only after the agreed outcome is complete and any changes have been validated and pushed. Leave threads open when a decision or follow-up is still pending.
+
 **Done:** each task has its own committed branch and PR targeting its immediate parent; the pushed stack is reconciled and its PR diffs are verified.
 
 ## 3. Merge and close
