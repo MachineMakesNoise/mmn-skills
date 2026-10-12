@@ -1,11 +1,11 @@
 ---
 name: mmn-github-workflow
-description: Manage GitHub anchor branches, issue-based task branches and their PRs, merges, and issue follow-up. Use when implementing a task from an issue, setting up an anchor, creating or submitting task PRs, merging PRs, or updating related issues.
+description: Manage GitHub anchor branches, task publication, PRs, merges, and issue follow-up. Use when implementing a task, setting up an anchor, creating or submitting task PRs, merging PRs, or updating related issues.
 ---
 
 # GitHub anchor, task PR, and issue workflow
 
-Use this workflow for a GitHub repository organized around an anchor branch and stacked task branches. It assumes Git, an authenticated GitHub CLI (`gh`), and the `github/gh-stack` CLI extension. Check that each prerequisite is available before using it; if a required command or repository feature is unavailable, report the blocker instead of silently switching workflows. Before any push, submit, or sync, confirm the intended remote. If multiple remotes exist, name the remote explicitly in Git commands (for example, `git push <remote> <branch>`) and pass `--remote <name>` to `gh stack` commands that support it. Ask the user when the destination is ambiguous.
+Use this workflow for GitHub task implementation and anchor setup, including explicitly authorized non-stack arrangements. It requires Git, an authenticated GitHub CLI (`gh`) for PR operations, and the `github/gh-stack` CLI extension for stacked work. Check the applicable prerequisites before using them; if a required command or repository feature is unavailable, report the blocker instead of silently switching workflows. Before any push, submit, or sync, confirm the intended remote. If multiple remotes exist, name the remote explicitly in Git commands (for example, `git push <remote> <branch>`) and pass `--remote <name>` to `gh stack` commands that support it. Ask the user when the destination is ambiguous.
 
 Apply any explicit repository policy that governs the work. This skill does not require a particular `AGENTS.md`, another skill, or repository-specific setup document.
 
@@ -23,6 +23,13 @@ Apply any explicit repository policy that governs the work. This skill does not 
 - Preserve unrelated working-tree changes. Keep each task branch focused on its reviewable task; include adjacent changes only for correctness, safety, consistency, or maintainability.
 - When delegating work, pass the branch roles, authorized transitions, task scope, and applicable Git and merge constraints to every delegated agent. Delegation does not expand the authorization.
 
+## Publication and completion
+
+- Validated task work and anchor setup include committing the scoped changes, pushing, and creating or updating required PRs in the same workflow run. Publish authorized work automatically; do not ask again merely to commit, push, or submit it. Preserve unrelated changes and follow the Git safeguards above.
+- A branch or stack waiver changes how publication happens, not whether it happens. Publication remains required unless the user explicitly waives it for the identified scope.
+- For stacked work, use the submission procedure below. For authorized non-stack work, use `git push <remote> <branch>` and `gh pr create` or `gh pr edit` as applicable, verifying the intended base, head, diff, summary, and issue links. When the user authorizes direct default-branch edits, commit and push to the explicit remote without manufacturing a PR.
+- Work is complete only after required publication succeeds and the remote branch and any required PRs are verified. A concrete safety, remote, tooling, or permission blocker leaves the work incomplete; report it rather than handing publication back as a suggested next step. Publication does not authorize merging; merge approval and prerequisites still apply.
+
 ## 1. Initialize an anchor
 
 Run this only after the user designates the current branch as the anchor and names its target. Confirm the current branch, target, Git status, and any parent issue before changing history or publishing a PR.
@@ -34,7 +41,7 @@ Run this only after the user designates the current branch as the anchor and nam
   git commit --allow-empty -m "chore: initialize anchor PR"
   ```
 
-- Push the anchor. If no matching PR exists, create a draft PR in this workflow run with:
+- Push the anchor with `git push <remote> <anchor>`. If no matching PR exists, create a draft PR in this workflow run with:
 
   ```bash
   gh pr create --draft --base <target> --head <anchor> --title "<anchor summary>" --body "<summary and parent issue link, if any>"
@@ -46,7 +53,7 @@ Run this only after the user designates the current branch as the anchor and nam
 
 ## 2. Implement on task branches
 
-Root each task stack on the anchor, including a stack with only one task. Start the first task branch with:
+Unless the user explicitly waives the branch or stack arrangement, root each task stack on the anchor, including a stack with only one task. Start the first task branch with:
 
 ```bash
 gh stack init --base <anchor> <task-branch>
@@ -56,7 +63,7 @@ For a user-designated separate task that belongs above the current stack, add a 
 
 Before committing, inspect the relevant task, parent, sibling, and related issues and repository artifacts. Include affected repository updates in the task commit, update related external issues before pushing or making another commit, and state what changed and why in the commit message. Keep each task and anchor PR title and body accurate, including relevant issue links when applicable. Update existing PRs with `gh pr edit <PR> --title "<title>" --body "<summary and issue link>"`; after submission, inspect every PR and execute `gh pr edit` for any stale title or body. Treat accurate PR summaries and issue links as required completion checks.
 
-After validating task changes, commit them and execute this submission command in the same workflow run:
+For stacked work, after validating task changes, commit them and execute this submission command in the same workflow run:
 
 ```bash
 gh stack submit --auto --open
@@ -66,7 +73,7 @@ Running this command is part of implementing the task, not a suggested follow-up
 
 When addressing PR review comments, reply in each thread with the implemented fix and relevant commit, or explain why no change was made. Resolve the thread only after the agreed outcome is complete and any changes have been validated and pushed. Leave threads open when a decision or follow-up is still pending.
 
-**Done:** each task has its own committed branch and PR targeting its immediate parent; the pushed stack is reconciled and its PR diffs are verified.
+**Done:** publication and verification are complete under the authorized arrangement. For stacked work, each task has its own committed branch and PR targeting its immediate parent; the pushed stack is reconciled and its PR diffs are verified.
 
 ## 3. Merge and close
 
