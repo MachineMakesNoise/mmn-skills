@@ -6,6 +6,7 @@ These skills work great alongside [Matt Pocock's skills](https://github.com/matt
 
 ## Skills
 
+- **integration-review** — delegate an explicitly requested whole-change review to a fresh read-only worker with separate Standards and Spec reports.
 - **mmn-context** — build or refresh evidence-backed Markdown context for a repository.
 - **mmn-find-work** — discover and group actionable TODO-style and research markers, with optional issue-platform creation and source cleanup.
 - **mmn-github-workflow** — manage GitHub anchor branches, stacked task PRs, authorized merges, and related issue updates and closure using GitHub CLI and `gh-stack`.
@@ -36,7 +37,7 @@ List what the CLI discovers before installing:
 npx skills add /path/to/mmn-skills --list
 ```
 
-Each skill folder includes the references it needs and does not depend on repository-local agent configuration or companion skills. The GitHub workflow skill requires GitHub CLI authentication and the `github/gh-stack` extension for stacked-PR operations.
+Each skill folder bundles its supporting references and works without repository-local agent configuration. `mmn-*` skills have no companion-skill dependencies. `integration-review` is the exception: install a host-compatible external `code-review` skill with the two-axis Standards/Spec process, and use a host that supports fresh native delegation and nested axis reviewers. A named integration-review agent is optional; missing capabilities or dependencies are blockers. The GitHub workflow skill requires GitHub CLI authentication and the `github/gh-stack` extension for stacked-PR operations.
 
 ## License
 
