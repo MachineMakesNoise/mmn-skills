@@ -28,26 +28,27 @@ Apply any explicit repository policy that governs the work. This skill does not 
 - Validated task work and anchor setup include committing the scoped changes, pushing, and creating or updating required PRs in the same workflow run. Publish authorized work automatically; do not ask again merely to commit, push, or submit it. Preserve unrelated changes and follow the Git safeguards above.
 - A branch or stack waiver changes how publication happens, not whether it happens. Publication remains required unless the user explicitly waives it for the identified scope.
 - For stacked work, use the submission procedure below. For authorized non-stack work, use `git push <remote> <branch>` and `gh pr create` or `gh pr edit` as applicable, verifying the intended base, head, diff, summary, and issue links. When the user authorizes direct default-branch edits, commit and push to the explicit remote without manufacturing a PR.
+- Every required PR—anchor, stacked task, or authorized non-stack, new or reused—must be ready for review at publication completion. If an existing PR is a draft, run `gh pr ready <PR>`; verify each required PR with `gh pr view <PR> --json isDraft` and require `isDraft` to be `false`.
 - Work is complete only after required publication succeeds and the remote branch and any required PRs are verified. A concrete safety, remote, tooling, or permission blocker leaves the work incomplete; report it rather than handing publication back as a suggested next step. Publication does not authorize merging; merge approval and prerequisites still apply.
 
 ## 1. Initialize an anchor
 
 Run this only after the user designates the current branch as the anchor and names its target. Confirm the current branch, target, Git status, and any parent issue before changing history or publishing a PR.
 
-- Inspect for an existing anchor PR whose base is the target and head is the anchor. Reuse a match and update its title or body if needed to reflect the scope and link the parent issue when one exists; if no match exists, create a draft PR after pushing the anchor below.
+- Inspect for an existing anchor PR whose base is the target and head is the anchor. Reuse a match and update its title or body if needed to reflect the scope and link the parent issue when one exists; if no match exists, create a PR after pushing the anchor below.
 - If the anchor has no commits ahead of the target and the index is clean, initialize the anchor PR with an empty commit:
 
   ```bash
   git commit --allow-empty -m "chore: initialize anchor PR"
   ```
 
-- Push the anchor with `git push <remote> <anchor>`. If no matching PR exists, create a draft PR in this workflow run with:
+- Push the anchor with `git push <remote> <anchor>`. If no matching PR exists, create a PR in this workflow run with:
 
   ```bash
-  gh pr create --draft --base <target> --head <anchor> --title "<anchor summary>" --body "<summary and parent issue link, if any>"
+  gh pr create --base <target> --head <anchor> --title "<anchor summary>" --body "<summary and parent issue link, if any>"
   ```
 
-  Do not stop after presenting the command. After creating or reusing the PR, inspect it and confirm the base, head, title, body, and parent issue link; confirm it is a draft when newly created. Do not initialize the task stack as part of anchor creation.
+  Do not stop after presenting the command. After creating or reusing the PR, inspect it and confirm the base, head, title, body, and parent issue link. Do not initialize the task stack as part of anchor creation.
 
 **Done:** the anchor is pushed, the correct PR targets the named branch and has an accurate summary and parent issue link when applicable, and no task changes have been made on the anchor.
 
@@ -69,7 +70,7 @@ For stacked work, after validating task changes, commit them and execute this su
 gh stack submit --auto --open
 ```
 
-Running this command is part of implementing the task, not a suggested follow-up for the user. It pushes the stack and opens ready-for-review PRs. Treat implementation as complete only after submission succeeds and you verify each PR with `gh stack view --json`, inspecting its base branch and diff to confirm that it contains only its task. When a lower layer changes, rebase and reconcile affected higher layers before pushing, then verify their PR diffs again. If submission fails or stacked PRs are unavailable, report the concrete blocker and leave the task incomplete rather than presenting the command as a next step for the user.
+Running this command is part of implementing the task, not a suggested follow-up for the user. It pushes the stack and creates or updates PRs. Treat implementation as complete only after submission succeeds and you verify each PR with `gh stack view --json`, inspecting its base branch and diff to confirm that it contains only its task. When a lower layer changes, rebase and reconcile affected higher layers before pushing, then verify their PR diffs again. If submission fails or stacked PRs are unavailable, report the concrete blocker and leave the task incomplete rather than presenting the command as a next step for the user.
 
 When addressing PR review comments, reply in each thread with the implemented fix and relevant commit, or explain why no change was made. Resolve the thread only after the agreed outcome is complete and any changes have been validated and pushed. Leave threads open when a decision or follow-up is still pending.
 
