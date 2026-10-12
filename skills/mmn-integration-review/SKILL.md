@@ -1,9 +1,9 @@
 ---
-name: integration-review
+name: mmn-integration-review
 description: Delegate an explicitly requested whole-PR, branch, or complete-change integration review to a fresh read-only worker that discovers the issue, plans, and solution context.
 ---
 
-# Integration review
+# MMN integration review
 
 Use only for an explicitly requested whole-change integration review, distinct
 from routine post-TDD implementation review.

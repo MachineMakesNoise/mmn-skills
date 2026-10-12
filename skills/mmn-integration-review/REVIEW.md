@@ -57,7 +57,7 @@ including the Standards smell baseline from that skill. Use an accessible
 absolute path or full contents for any required reference.
 
 Axis children are terminal: they do only the assigned axis, perform no further
-delegation, and load neither the integration-review router nor this worker
+delegation, and load neither the mmn-integration-review router nor this worker
 procedure. A platform adapter may provide the dispatch syntax; no named adapter
 is required if a native agent can satisfy this contract.
 
