@@ -78,7 +78,7 @@ When addressing PR review comments, reply in each thread with the implemented fi
 
 ## 3. Merge and close
 
-Merge only after GitHub user approval or an explicit user request to merge. Internal agent review does not authorize merging. Confirm that all applicable repository merge prerequisites are satisfied, including required checks, reviews, and branch protections; user authorization does not bypass them. Once all task PRs have merged into the anchor, merge the anchor PR into the target only when that PR is separately authorized and its prerequisites are satisfied.
+Merge only after GitHub user approval or an explicit user request to merge. Internal agent review does not authorize merging. An explicit user request to merge a PR is sufficient on its own, even when the PR is a draft or has no approving review, because GitHub does not let authors approve their own PRs. Mark a draft PR ready with `gh pr ready <PR>` before merging it. Confirm that the remaining repository merge prerequisites are satisfied, including required checks and branch protections; report any that block the merge rather than bypassing them. Once all task PRs have merged into the anchor, merge the anchor PR into the target only when that PR is separately authorized and its prerequisites are satisfied.
 
 For a single task PR, use `gh pr merge`. For a stack containing multiple task PRs, merge the lowest task PR with `gh stack merge <lowest-task-PR-number> --yes`, then run `gh stack sync` and inspect the remaining layers before continuing. Do not use `gh pr merge` to merge a multi-PR stack.
 
