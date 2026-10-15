@@ -13,7 +13,7 @@ Apply any explicit repository policy that governs the work. This skill does not 
 
 - The **target branch** is the destination for the broader body of work. Use the branch named by the user; do not infer it from the repository default.
 - The **anchor branch** has an anchor PR into the target and is the trunk for task stacks. It is not itself a task layer and stays open while its task PRs merge into it.
-- Each **task branch** contains one reviewable task. Its PR targets the branch directly below it: the anchor for the bottom task, or the preceding task branch for higher layers.
+- Each **task branch** contains one reviewable task. Its PR targets the branch directly below it: the anchor for the bottom task, or the preceding task branch for higher layers. Task PRs may stay open as a visible stack while later tasks build on them. They merge bottom-up: a task PR merges only after every task PR below it.
 
 ## Git safeguards
 
@@ -64,6 +64,8 @@ gh stack init --base <anchor> <task-branch>
 
 For a user-designated separate task that belongs above the current stack, add a layer with `gh stack add <task-branch>`. Use the existing task branch and PR when continuing work on a task already in the stack. A task PR targets its immediate parent branch. When the whole stack has merged into the anchor, start the next task stack from the anchor.
 
+A dependency whose PR sits below the task in the same stack does not block implementing or publishing the task. Keep the dependency links between issues, and add no blocked marker, label, or status for a dependency the stack satisfies. On the dependent issue, link its task PR and the PR it is stacked on. Dependencies resolve when PRs merge (section 3).
+
 Before committing, inspect the relevant task, parent, sibling, and related issues and repository artifacts. Include affected repository updates in the task commit, update related external issues before pushing or making another commit, and state what changed and why in the commit message. Keep each task and anchor PR title and body accurate, including relevant issue links when applicable. Update existing PRs with `gh pr edit <PR> --title "<title>" --body "<summary and issue link>"`; after submission, inspect every PR and execute `gh pr edit` for any stale title or body. Treat accurate PR summaries and issue links as required completion checks.
 
 For stacked work, after validating task changes, commit them and execute this submission command in the same workflow run:
@@ -72,9 +74,16 @@ For stacked work, after validating task changes, commit them and execute this su
 gh stack submit --auto --open
 ```
 
-Running this command is part of implementing the task, not a suggested follow-up for the user. It pushes the stack and creates or updates PRs. Treat implementation as complete only after submission succeeds and you verify each PR with `gh stack view --json`, inspecting its base branch and diff to confirm that it contains only its task. When a lower layer changes, rebase and reconcile affected higher layers before pushing, then verify their PR diffs again. If submission fails or stacked PRs are unavailable, report the concrete blocker and leave the task incomplete rather than presenting the command as a next step for the user.
+Running this command is part of implementing the task, not a suggested follow-up for the user. It pushes the stack and creates or updates PRs. Treat implementation as complete only after submission succeeds and you verify each PR with `gh stack view --json`, inspecting its base branch and diff to confirm that it contains only its task. If submission fails or stacked PRs are unavailable, report the concrete blocker and leave the task incomplete rather than presenting the command as a next step for the user.
 
 When addressing PR review comments, reply in each thread with the implemented fix and relevant commit, or explain why no change was made. Resolve the thread only after the agreed outcome is complete and any changes have been validated and pushed. Leave threads open when a decision or follow-up is still pending.
+
+When a lower layer changes, including for review fixes, carry the change up the stack before submitting:
+
+1. Make the change on the lower layer's branch with the same implementation process used for its task, and commit it.
+2. Run `gh stack rebase --upstack`.
+3. For each higher layer, bottom-up, check out its branch and validate it against the changed layers below; a clean rebase does not show that it still works. Make any follow-on changes on that branch with the same implementation process, commit them, and run `gh stack rebase --upstack` again before moving to the next layer.
+4. Submit once, then verify each affected PR's base and diff, and update any title or body whose scope changed.
 
 **Done:** publication and verification are complete under the authorized arrangement. For stacked work, each task has its own committed branch and PR targeting its immediate parent; the pushed stack is reconciled and its PR diffs are verified.
 
