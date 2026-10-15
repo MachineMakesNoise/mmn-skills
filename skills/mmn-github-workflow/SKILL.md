@@ -1,6 +1,6 @@
 ---
 name: mmn-github-workflow
-description: Manage GitHub anchor branches, task publication, PRs, merges, and issue follow-up. Use when implementing a task, setting up an anchor, creating or submitting task PRs, merging PRs, or updating related issues.
+description: Manage GitHub anchor branches, task branches and stacks, publication, PRs, merges, and issue follow-up. Use whenever implementing an issue, ticket, or task (including `/implement #N`): load it before the first change to check how the current branch, anchor, and stack fit the workflow, and follow it through commit, push, and PR. Also use when setting up an anchor, creating or submitting PRs, merging PRs, or updating related issues.
 ---
 
 # GitHub anchor, task PR, and issue workflow
@@ -53,6 +53,8 @@ Run this only after the user designates the current branch as the anchor and nam
 **Done:** the anchor is pushed, the correct PR targets the named branch and has an accurate summary and parent issue link when applicable, and no task changes have been made on the anchor.
 
 ## 2. Implement on task branches
+
+Before the first change, place the task in the current repository state: inspect the current branch, Git status, its PR and base, and `gh stack view`. Continue an existing task branch for the same task, add a layer for a separate task above the current stack, or start a stack on the anchor. When no anchor or target is designated, or the current branch is the default branch, ask before changing anything.
 
 Unless the user explicitly waives the branch or stack arrangement, root each task stack on the anchor, including a stack with only one task. Start the first task branch with:
 
