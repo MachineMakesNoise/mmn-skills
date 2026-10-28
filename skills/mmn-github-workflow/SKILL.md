@@ -35,7 +35,7 @@ Apply any explicit repository policy that governs the work. This skill does not 
 
 Run this only after the user designates the current branch as the anchor and names its target. Confirm the current branch, target, Git status, and any parent issue before changing history or publishing a PR.
 
-- Inspect for an existing anchor PR whose base is the target and head is the anchor. Reuse a match and update its title or body if needed to reflect the scope and link the parent issue when one exists; if no match exists, create a PR after pushing the anchor below.
+- Inspect for an existing anchor PR whose base is the target and head is the anchor. Reuse a match and update its title or body if needed to reflect the scope and reference the parent issue when one exists, using a non-closing reference such as `Part of #N` because section 3 decides closure; if no match exists, create a PR after pushing the anchor below.
 - If the anchor has no commits ahead of the target and the index is clean, initialize the anchor PR with an empty commit:
 
   ```bash
@@ -66,7 +66,7 @@ For a user-designated separate task that belongs above the current stack, add a 
 
 A dependency whose PR sits below the task in the same stack does not block implementing or publishing the task. Keep the dependency links between issues, and add no blocked marker, label, or status for a dependency the stack satisfies. On the dependent issue, link its task PR and the PR it is stacked on. Dependencies resolve when PRs merge (section 3).
 
-Before committing, inspect the relevant task, parent, sibling, and related issues and repository artifacts. Include affected repository updates in the task commit, update related external issues before pushing or making another commit, and state what changed and why in the commit message. Keep each task and anchor PR title and body accurate, including relevant issue links when applicable. Update existing PRs with `gh pr edit <PR> --title "<title>" --body "<summary and issue link>"`; after submission, inspect every PR and execute `gh pr edit` for any stale title or body. Treat accurate PR summaries and issue links as required completion checks.
+Before committing, inspect the relevant task, parent, sibling, and related issues and repository artifacts. If the task issue has a parent issue but is not yet its sub-issue, add it with `gh api -X POST repos/{owner}/{repo}/issues/<parent-number>/sub_issues -F sub_issue_id=<task-issue-id>`, where the id comes from `gh api repos/{owner}/{repo}/issues/<task-number> --jq .id`, not the issue number. Include affected repository updates in the task commit, update related external issues before pushing or making another commit, and state what changed and why in the commit message. Keep each task and anchor PR title and body accurate. Each task PR body references its task issue and, when one exists, the parent issue. Use non-closing references such as `Part of #N`: closing keywords are ignored on PRs that do not target the default branch, and section 3 decides closure. Update existing PRs with `gh pr edit <PR> --title "<title>" --body "<summary and issue link>"`; after submission, inspect every PR and execute `gh pr edit` for any stale title or body. Treat accurate PR summaries and issue links as required completion checks.
 
 For stacked work, after validating task changes, commit them and execute this submission command in the same workflow run:
 
